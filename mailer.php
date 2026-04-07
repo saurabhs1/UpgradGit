@@ -37,7 +37,7 @@ if($_POST['action']=="send"){
     $messageType=leafTrim($_POST['messageType']);
     $messageLetter=leafTrim($_POST['messageLetter']);    
     $messageLetter = urlencode($messageLetter);
-    $messageLetter = ereg_replace("%5C%22", "%22", $messageLetter);
+    $messageLetter = str_replace("%5C%22", "%22", $messageLetter);
     $messageLetter = urldecode($messageLetter);
     $messageLetter = stripslashes($messageLetter);
     $subject = stripslashes($subject);
@@ -76,9 +76,10 @@ function randString($consonants) {
     return $password;
 }
 function leafMailCheck($email){
-   $exp = "^[a-z\'0-9]+([._-][a-z\'0-9]+)*@([a-z0-9]+([._-][a-z0-9]+))+$";
-   if(eregi($exp,$email)){
-        if(checkdnsrr(array_pop(explode("@",$email)),"MX")){return true;}
+   $exp = "/^[a-z'0-9]+([._-][a-z'0-9]+)*@([a-z0-9]+([._-][a-z0-9]+))+$/i";
+   if(preg_match($exp, $email)){
+        $parts = explode("@", $email);
+        if(checkdnsrr(array_pop($parts),"MX")){return true;}
         else{return false;}
    }
    else{return false;}    
